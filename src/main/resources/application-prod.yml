@@ -1,0 +1,85 @@
+spring:
+  application:
+    name: ${APPLICATION_NAME:user-service}
+
+  # Data Source properties
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://172.17.1.4:5432/user-service?currentSchema=${spring.application.name}}
+    platform: postgres
+    username: ${DB_LOGIN:postgres}
+    password: ${DB_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: ${DATASOURCE_POOL_MAX_SIZE:10}
+      minimum-idle: ${DATASOURCE_POOL_MIN_IDLE:1}
+
+  # MongoDB properties
+  data:
+    mongodb:
+      host: 172.17.1.4
+      port: 27020
+      database: afinny
+
+  # Maximum allowed file size
+  servlet:
+    multipart:
+      max-file-size: 16MB
+
+  zipkin:
+    baseUrl: ${TRACING_BASEURL:http://localhost:9411/}
+    sender:
+      type: ${TRACING_SENDER_TYPE:kafka}
+    kafka:
+      topic: ${TRACING_KAFKA_TOPIC:tracing_topic}
+    service:
+      name: ${TRACING_SERVICE_NAME:dev-user-service}
+  sleuth:
+    sampler:
+      probability: 1
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:172.17.1.4:9092}
+
+  # Messaging
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:172.17.1.4:9092}
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure.include: beans, env, health, info, metrics, mappings
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+# Custom Kafka
+kafka:
+  kafka-properties:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  topics:
+    user-service-listener:
+      path: "credit_to_user_update_employer_id"
+      enabled: true
+  bootstrap-servers: ${KAFKA_BROKERS:172.17.1.4:9092}

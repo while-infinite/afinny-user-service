@@ -1,0 +1,2 @@
+ALTER TABLE fingerprint
+ALTER COLUMN fingerprint TYPE VARCHAR (36);

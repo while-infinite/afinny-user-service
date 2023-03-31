@@ -1,0 +1,41 @@
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  h2:
+    console:
+      enabled: false
+      settings:
+        web-allow-others: true
+  flyway:
+    enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: off
+
+# Custom Kafka
+kafka:
+  kafka-properties:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  topics:
+    user-service-listener:
+      path: "test"
+      enabled: true
+  bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}

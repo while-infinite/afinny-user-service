@@ -1,0 +1,43 @@
+spring:
+
+  # Data Source properties
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:${spring.application.name}}
+    username: h2
+    password: ${DB_PASSWORD:password}
+    hikari:
+      maximum-pool-size: ${DATASOURCE_POOL_MAX_SIZE:10}
+      minimum-idle: ${DATASOURCE_POOL_MIN_IDLE:1}
+    driver-class-name: org.h2.Driver
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:29092}
+  zipkin:
+    enabled: false
+  sleuth:
+    kafka:
+      enabled: false
+  flyway:
+    enabled: false
+
+eureka:
+  client:
+    enabled: false
+feign:
+  httpclient:
+    enabled: false
+
+# Custom Kafka
+kafka:
+  enabled: false
+  kafka-properties:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  topics:
+    user-service-listener:
+      path: "test"
+  bootstrap-servers: ${KAFKA_BROKERS:localhost:29092}
